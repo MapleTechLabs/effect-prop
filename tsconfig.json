@@ -1,5 +1,5 @@
 {
-	"include": ["src/**/*.ts", "test/**/*.ts", "bench/**/*.ts", "tsdown.config.ts"],
+	"include": ["src/**/*.ts", "test/**/*.ts", "bench/**/*.ts", "examples/**/*.ts", "tsdown.config.ts", "vitest.config.ts"],
 	"compilerOptions": {
 		"target": "ES2022",
 		"module": "ESNext",
@@ -18,6 +18,10 @@
 				"reportSuggestionsAsWarningsInTsc": true
 			}
 		],
-		"types": ["node"]
+		"types": ["node"],
+		"paths": {
+			"@maple-dev/effect-prop": ["./src/index.ts"],
+			"@maple-dev/effect-prop/*": ["./src/*.ts"]
+		}
 	}
 }
