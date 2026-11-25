@@ -53,4 +53,4 @@ export interface FeedbackService {
 export const none: FeedbackService = { begin: Effect.void, novelty: Effect.succeed(0), peek: Effect.succeed(0), summary: Effect.succeed(undefined) }
 
 /** The feedback the current search reads. Defaults to `none`. */
-export const Feedback = Context.Reference<FeedbackService>("effect-prop/Feedback", { defaultValue: () => none })
+export const Feedback = Context.Reference<FeedbackService>("@maple-dev/effect-prop/Feedback", { defaultValue: () => none })

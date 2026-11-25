@@ -1,15 +1,78 @@
 {
-	"name": "effect-prop",
+	"name": "@maple-dev/effect-prop",
 	"version": "0.0.0",
-	"private": true,
 	"description": "Property-based testing for Effect: replayable generators, shrinking with no per-type code, several failures per run, and coverage-guided search",
+	"keywords": [
+		"effect",
+		"property-based-testing",
+		"property-testing",
+		"fuzzing",
+		"coverage-guided",
+		"shrinking",
+		"vitest",
+		"testing",
+		"typescript"
+	],
+	"homepage": "https://github.com/MapleTechLabs/effect-prop#readme",
+	"bugs": {
+		"url": "https://github.com/MapleTechLabs/effect-prop/issues"
+	},
 	"license": "MIT",
+	"author": "Makisuo, Inc.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/MapleTechLabs/effect-prop.git"
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"GUIDE.md"
+	],
 	"type": "module",
+	"engines": {
+		"node": ">=20.19.0"
+	},
 	"sideEffects": false,
 	"exports": {
-		".": "./src/index.ts",
-		"./node": "./src/node.ts",
-		"./vitest": "./src/vitest.ts"
+		".": {
+			"types": "./dist/index.d.mts",
+			"import": "./dist/index.mjs",
+			"default": "./dist/index.mjs"
+		},
+		"./node": {
+			"types": "./dist/node.d.mts",
+			"import": "./dist/node.mjs",
+			"default": "./dist/node.mjs"
+		},
+		"./vitest": {
+			"types": "./dist/vitest.d.mts",
+			"import": "./dist/vitest.mjs",
+			"default": "./dist/vitest.mjs"
+		}
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build": "tsdown",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"bench": "PROP_BENCH=1 vitest run bench --disable-console-intercept",
+		"test:package": "bun run build && node scripts/check-package.mjs",
+		"prepublishOnly": "bun run typecheck && bun run test && bun run test:package",
+		"changeset": "changeset",
+		"version-packages": "changeset version",
+		"release": "changeset publish"
+	},
+	"devDependencies": {
+		"@changesets/cli": "3.0.3",
+		"@effect/language-service": "^0.87.3",
+		"@types/node": "^22.10.2",
+		"effect": "4.1.2",
+		"fast-check": "^4.9.0",
+		"tsdown": "^0.22.14",
+		"typescript": "^7.0.2",
+		"vitest": "^4.1.9"
 	},
 	"peerDependencies": {
 		"effect": "^4.0.6",
@@ -19,5 +82,6 @@
 		"vitest": {
 			"optional": true
 		}
-	}
+	},
+	"packageManager": "bun@1.4.0"
 }

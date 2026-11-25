@@ -10,17 +10,22 @@ decision it makes, and that record is the input. Replay, shrinking and
 coverage-guided mutation are all "run the generator again on edited decisions",
 so none of them needs code per type.
 
-Status: experimental, in this repository only, not published. The API will
-change. The examples import `effect-prop`; from this repository's tests, import
-by path (`../../effect-prop/src/index`, `/node`, `/vitest`). Its modules are
-named as Effect's are (`Gen.ts`, `Prop.ts`), since it is meant to leave this
-repository as a package of its own.
+Status: experimental. The API will change between 0.x releases; the changelog
+says how.
+
+```sh
+bun add -d @maple-dev/effect-prop
+```
+
+It needs `effect` 4, and `vitest` 4 for the `prop` helper. It began in
+[effect-orm](https://github.com/MapleTechLabs/effect-orm), where it runs the
+query fuzzing.
 
 ```ts
 import { Effect } from "effect"
 import { expect } from "vitest"
-import { Gen } from "effect-prop"
-import { prop } from "effect-prop/vitest"
+import { Gen } from "@maple-dev/effect-prop"
+import { prop } from "@maple-dev/effect-prop/vitest"
 
 prop("a decoded row encodes back to itself", Gen.fromSchema(Row), (row) =>
 	Effect.gen(function* () {
@@ -120,13 +125,13 @@ your own the same way (see `src/Search.ts`).
 
 `Feedback` says what "something new" means:
 
-- `Coverage.layer({ include })` from `effect-prop/node`: V8 code coverage of the
+- `Coverage.layer({ include })` from `@maple-dev/effect-prop/node`: V8 code coverage of the
   scripts `include` accepts. Node only.
 - `Spans.layer`: parent and child span names the code under test opens. Works
   anywhere, and sees only what is traced.
 
 ```ts
-import { Coverage } from "effect-prop/node"
+import { Coverage } from "@maple-dev/effect-prop/node"
 
 prop("the parser never throws", input, (text) => void parse(text), {
 	search: Search.coverage,
@@ -197,7 +202,7 @@ reached the known smallest input:
 | calculator | 30/30 | 6/30 |
 
 ```sh
-PROP_BENCH=1 bunx vitest run effect-prop/bench --disable-console-intercept
+bun run bench
 ```
 
 ## Not built yet
@@ -206,6 +211,31 @@ PROP_BENCH=1 bunx vitest run effect-prop/bench --disable-console-intercept
 - Concurrent stateful testing, and ephyra's causality analysis of a failing trace.
 - An HTML report and a CLI. Line-level coverage in the report: `Report.feedback`
   lists files and the functions no input reached.
-- Publishing as its own package.
 
-Testing a project with an agent: see [GUIDE.md](GUIDE.md).
+## Testing a project with an agent
+
+Give your coding agent this prompt; [GUIDE.md](GUIDE.md) tells it how to work:
+
+```text
+Let's test <my library> with @maple-dev/effect-prop
+(https://github.com/MapleTechLabs/effect-prop). Read its README and GUIDE.md
+first, then write and widen properties until you find bugs; validate, triage
+and report them to me.
+```
+
+## Developing
+
+```sh
+bun install
+bun run typecheck
+bun run test          # the library's own tests
+bun run bench         # the shrinking comparison with fast-check
+bun run test:package  # builds, packs, and runs a property from a fresh install
+```
+
+Releases go through [changesets](.changeset/README.md): add one with
+`bun run changeset` in the pull request that changes behaviour.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

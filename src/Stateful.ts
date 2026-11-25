@@ -39,7 +39,7 @@ export const commands = <Model, C extends Command<Model, any, any, any>>(options
 }
 
 /** A command reported that the system and the model disagree. `step` counts from 0. */
-export class CommandFailed extends Schema.TaggedError<CommandFailed>()("effect-prop/CommandFailed", {
+export class CommandFailed extends Schema.TaggedError<CommandFailed>()("@maple-dev/effect-prop/CommandFailed", {
 	message: Schema.String,
 	step: Schema.Number,
 	command: Schema.String,

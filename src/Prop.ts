@@ -23,7 +23,7 @@ class CaseState {
 	signature: string | undefined
 }
 
-const CurrentCase = Context.Reference<CaseState | undefined>("effect-prop/CurrentCase", { defaultValue: () => undefined })
+const CurrentCase = Context.Reference<CaseState | undefined>("@maple-dev/effect-prop/CurrentCase", { defaultValue: () => undefined })
 
 /** Skips this input when `condition` is false. It counts as a discard, not a pass. */
 export const assume = (condition: boolean, reason = "assumption not met"): Effect.Effect<void> =>
@@ -578,7 +578,7 @@ export const formatReport = <A, E>(report: Report<A, E>, options: { readonly cov
 }
 
 /** A property did not hold. `message` is the formatted report. */
-export class PropertyFailed extends Schema.TaggedError<PropertyFailed>()("effect-prop/PropertyFailed", {
+export class PropertyFailed extends Schema.TaggedError<PropertyFailed>()("@maple-dev/effect-prop/PropertyFailed", {
 	message: Schema.String,
 }) {}
 

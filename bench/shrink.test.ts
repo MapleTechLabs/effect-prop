@@ -1,7 +1,7 @@
 // Shrinking, compared with fast-check on the classic shrinking challenges
 // (github.com/jlink/shrinking-challenge). Not part of the test suite:
 //
-//   PROP_BENCH=1 bunx vitest run effect-prop/bench --disable-console-intercept
+//   bun run bench
 //
 // For each challenge and each of 30 seeds, both libraries search until the
 // property fails and shrink. The table shows how often each found a failure, the

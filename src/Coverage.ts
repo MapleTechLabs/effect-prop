@@ -178,7 +178,7 @@ interface Collection {
 
 /** On `globalThis`, not in a module variable: a test runner may evaluate this module more than once per process. */
 const slot = globalThis as { [key: symbol]: Promise<Collection> | undefined }
-const COLLECTION = Symbol.for("effect-prop/Coverage/collection")
+const COLLECTION = Symbol.for("@maple-dev/effect-prop/Coverage/collection")
 
 const isDependency = (url: string): boolean => url.includes("/node_modules/")
 

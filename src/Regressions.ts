@@ -23,7 +23,7 @@ export interface RegressionsService {
 const none: RegressionsService = { load: () => Effect.succeed([]), save: () => Effect.void }
 
 /** Where failures are remembered. Defaults to nowhere. */
-export const Regressions = Context.Reference<RegressionsService>("effect-prop/Regressions", { defaultValue: () => none })
+export const Regressions = Context.Reference<RegressionsService>("@maple-dev/effect-prop/Regressions", { defaultValue: () => none })
 
 const StoredFile = Schema.Struct({
 	property: Schema.String,

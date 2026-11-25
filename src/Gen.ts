@@ -12,7 +12,7 @@ import { dual } from "effect/Function"
 import { type Pipeable, pipeArguments } from "effect/Pipeable"
 import { type Choices, Discard, MAX_DRAW, Rng, Source, type Span } from "./Source"
 
-export const TypeId = "~effect-prop/Gen"
+export const TypeId = "~@maple-dev/effect-prop/Gen"
 
 export interface Gen<out A> extends Pipeable {
 	readonly [TypeId]: typeof TypeId
