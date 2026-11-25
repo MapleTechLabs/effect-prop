@@ -1,6 +1,6 @@
 {
 	"name": "@maple-dev/effect-prop",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"description": "Property-based testing for Effect: replayable generators, shrinking with no per-type code, several failures per run, and coverage-guided search",
 	"keywords": [
 		"effect",
