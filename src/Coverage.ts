@@ -10,6 +10,7 @@
 import { readFile } from "node:fs/promises"
 import { Session } from "node:inspector/promises"
 import { SourceMap } from "node:module"
+import { fileURLToPath } from "node:url"
 import { Effect, Layer } from "effect"
 import { Feedback, type FeedbackService, type FileSummary } from "./Feedback"
 import { relativePath } from "./internal"
@@ -140,16 +141,35 @@ export class Tracker {
  */
 const EXPORT_GETTER_RE = /^\(\)\s*=>\s*\{\s*try\s*\{\s*return [\w$.]+\s*\}\s*catch\s*\{\s*\}\s*\}/
 
+interface VitestModules {
+	readonly fileToModulesMap?: Map<string, Iterable<{ readonly meta?: { readonly sourceMap?: unknown } }>>
+}
+
+/**
+ * vitest 5 sends a module's source map to its worker beside the code instead of
+ * inlining it, so V8's copy of the script has none. The worker keeps it on the
+ * module it evaluated; vitest 4 and other runners inline it and never get here.
+ */
+const vitestSourceMap = (url: string): string | undefined => {
+	const modules = (globalThis as { __vitest_worker__?: { evaluatedModules?: VitestModules } }).__vitest_worker__?.evaluatedModules
+	if (modules?.fileToModulesMap === undefined || !url.startsWith("file://")) return undefined
+	for (const module of modules.fileToModulesMap.get(fileURLToPath(url)) ?? []) {
+		if (typeof module.meta?.sourceMap === "string") return module.meta.sourceMap
+	}
+	return undefined
+}
+
 /** Offsets of a script's source turned into the lines of the file it was built from. */
-const lineResolver = (source: string, fallbackFile: string): ((offset: number) => { readonly file: string; readonly line: number }) => {
+const lineResolver = (source: string, fallbackFile: string, url: string): ((offset: number) => { readonly file: string; readonly line: number }) => {
 	const lineStarts = [0]
 	for (let i = 0; i < source.length; i++) if (source.charCodeAt(i) === 10) lineStarts.push(i + 1)
-	let map: SourceMap | undefined
 	// The last one wins: a bundled dependency can carry the comment of its own build.
 	const inline = [...source.matchAll(/^\/\/# sourceMappingURL=data:application\/json[^,]*;base64,([A-Za-z0-9+/=]+)\s*$/gm)].at(-1)
-	if (inline !== undefined) {
+	const json = inline !== undefined ? Buffer.from(inline[1]!, "base64").toString("utf8") : vitestSourceMap(url)
+	let map: SourceMap | undefined
+	if (json !== undefined) {
 		try {
-			map = new SourceMap(JSON.parse(Buffer.from(inline[1]!, "base64").toString("utf8")))
+			map = new SourceMap(JSON.parse(json))
 		} catch {
 			map = undefined
 		}
@@ -249,7 +269,7 @@ export const layer = (options: CoverageOptions): Layer.Layer<never> =>
 				const files: Array<FileSummary> = []
 				for (const [url, script] of tracker.scripts) {
 					const source = await sourceOf(script.scriptId, url)
-					const resolve = source === undefined ? undefined : lineResolver(source, relativePath(url))
+					const resolve = source === undefined ? undefined : lineResolver(source, relativePath(url), url)
 					let covered = 0
 					let total = 0
 					const unreached: Array<string> = []
